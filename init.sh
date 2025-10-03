@@ -44,6 +44,7 @@ OPTIONS:
     -m, --memory SIZE       Memory in MB (overrides config default)
     -p, --cpus COUNT        Number of CPUs (overrides config default)
     -s, --size SIZE         Disk size (overrides config default)
+    -N, --no-network        Disable network
     -n, --name SUFFIX       Custom name suffix (default: random word)
     -h, --help              Show this help message
 
@@ -107,6 +108,10 @@ while [[ $# -gt 0 ]]; do
             OVERRIDE_DISK_SIZE="$2"
             shift 2
             ;;
+        -N|--no-network)
+            OVERRIDE_NETWORK="none"
+            shift
+            ;;
         -n|--name)
             CUSTOM_NAME="$2"
             shift 2
@@ -121,7 +126,6 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-# Validate config file is provided
 if [ -z "$CONFIG_FILE" ]; then
     echo "Error: Config file required. Use -c to specify a config file."
     echo ""
@@ -220,7 +224,7 @@ elif [ "$NETWORK" = "user" ]; then
 fi
 
 # Add display and graphics
-QEMU_CMD+=(-vga virtio)
+QEMU_CMD+=(-vga std)
 QEMU_CMD+=(-display "${DISPLAY:-gtk}")
 
 # Add boot configuration
